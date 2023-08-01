@@ -103,7 +103,7 @@ public class Employee {
         if (this == o) return true;
         if (!(o instanceof Employee)) return false;
         Employee employee = (Employee) o;
-        return  Float.compare(employee.salary, salary) == 0
+        return Float.compare(employee.salary, salary) == 0
                 && Objects.equals(lastName, employee.lastName)
                 && Objects.equals(firstName, employee.firstName)
                 && Objects.equals(middleName, employee.middleName);

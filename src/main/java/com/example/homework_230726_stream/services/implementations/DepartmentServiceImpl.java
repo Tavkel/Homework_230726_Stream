@@ -1,21 +1,15 @@
 package com.example.homework_230726_stream.services.implementations;
 
-import com.example.homework_230726_stream.controllers.GlobalControllerExceptionHandler;
 import com.example.homework_230726_stream.helpers.StupidCache;
 import com.example.homework_230726_stream.models.Department;
 import com.example.homework_230726_stream.models.Employee;
 import com.example.homework_230726_stream.services.interfaces.DepartmentService;
-import com.example.homework_230726_stream.services.interfaces.EmployeeService;
 import com.example.homework_230726_stream.services.repositories.DepartmentRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Service
 public class DepartmentServiceImpl implements DepartmentService {
@@ -36,48 +30,49 @@ public class DepartmentServiceImpl implements DepartmentService {
         return cache.get(cacheKey);
     }
 
-    @Override
-    public Department getDepartmentById(int id) {
+    private Department getDepartmentById(int id) {
         checkCache();
-        return cache.get(cacheKey).stream().filter(d -> d.getId() ==id).findFirst().get();
+        var result = cache.get(cacheKey).stream()
+                .filter(d -> d.getId() == id)
+                .findFirst();
+        if (result.isPresent()) {
+            return result.get();
+        } else {
+            throw new NoSuchElementException();
+        }
     }
 
     @Override
     public Employee getMinSalaryEmployee(int id) {
         checkCache();
-        return  cache.get(cacheKey).stream()
-                .filter(d -> d.getId() == id).findFirst().get()
-                .getEmployees().stream().min(Comparator.comparingDouble(Employee::getSalary)).get();
+        var department = getDepartmentById(id);
+        var result = department.getEmployees().stream()
+                .min(Comparator.comparingDouble(Employee::getSalary));
+        if (result.isPresent()) {
+            return result.get();
+        } else {
+            throw new NoSuchElementException();
+        }
     }
 
     @Override
     public Employee getMaxSalaryEmployee(int id) {
         checkCache();
-        return  cache.get(cacheKey).stream()
-                .filter(d -> d.getId() == id).findFirst().get()
-                .getEmployees().stream().max(Comparator.comparingDouble(Employee::getSalary)).get();
+        var department = getDepartmentById(id);
+        var result = department.getEmployees().stream()
+                .max(Comparator.comparingDouble(Employee::getSalary));
+        if (result.isPresent()) {
+            return result.get();
+        } else {
+            throw new NoSuchElementException();
+        }
     }
 
     @Override
     public Collection<Employee> getEmployeesFromDepartment(int id) {
         checkCache();
-        return cache.get(cacheKey).stream().filter(d -> d.getId() == id).findFirst().get().getEmployees();
-    }
-
-    //Прям чувствую что перемудрил, но времени нет, и так из-за форс мажора опаздываю
-    @Override
-    public Collection<Employee> getEmployeesFromAllDepartments() {
-        checkCache();
-        var result = new ArrayList<Employee>();
-        var departments = cache.get(cacheKey).stream().sorted(Comparator.comparingInt(d -> d.getId())).collect(Collectors.toList());
-        for (var department : departments){
-            try {
-                result.addAll(department.getEmployees());
-            } catch (Exception e){
-                logger.info("No employees in department " + department.getDepartmentName() + " found");
-            }
-        }
-        return result;
+        var department = getDepartmentById(id);
+        return department.getEmployees();
     }
 
     private void checkCache() {

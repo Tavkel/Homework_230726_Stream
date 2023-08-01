@@ -8,10 +8,10 @@ import com.example.homework_230726_stream.services.interfaces.EmployeeService;
 import com.example.homework_230726_stream.services.repositories.EmployeeRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.List;
-
-import static java.util.Arrays.stream;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -33,9 +33,23 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
+    public Map<String, List<Employee>> getAllEmployeesGroupedByDepartment() {
+        checkCache();
+        return cache.get(cacheKey).stream()
+                .collect(Collectors.groupingBy(e -> e.getDepartment().getDepartmentName()));
+    }
+
+    @Override
     public Employee getEmployeeById(int id) {
         checkCache();
-        return cache.get(cacheKey).stream().filter(e -> e.getId() == id).findFirst().get();
+        var result = cache.get(cacheKey).stream()
+                .filter(e -> e.getId() == id)
+                .findFirst();
+        if (result.isPresent()) {
+            return result.get();
+        } else {
+            throw new NoSuchElementException();
+        }
     }
 
     @Override
@@ -48,10 +62,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public Employee createEmployee(Employee employee) {
         checkCache();
-        if(cache.get(cacheKey).size() >= MAX_EMPLOYEE_COUNT){
+        if (cache.get(cacheKey).size() >= MAX_EMPLOYEE_COUNT) {
             throw new MaxEmployeeCountReachedException();
         }
-        if(cache.get(cacheKey).contains(employee)){
+        if (cache.get(cacheKey).contains(employee)) {
             throw new EmployeeAlreadyExistsException();
         }
         cache.dropCacheKey(cacheKey);

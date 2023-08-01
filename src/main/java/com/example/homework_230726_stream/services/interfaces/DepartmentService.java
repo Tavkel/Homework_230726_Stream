@@ -9,13 +9,9 @@ import java.util.List;
 public interface DepartmentService {
     List<Department> getAllDepartments();
 
-    Department getDepartmentById(int id);
-
     Employee getMinSalaryEmployee(int id);
 
     Employee getMaxSalaryEmployee(int id);
 
     Collection<Employee> getEmployeesFromDepartment(int id);
-
-    Collection<Employee> getEmployeesFromAllDepartments();
 }
