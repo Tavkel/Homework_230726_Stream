@@ -27,17 +27,15 @@ public class DepartmentController {
     public ResponseEntity<Collection<Department>> getDepartments(){
         return new ResponseEntity<>(departmentService.getAllDepartments(), HttpStatus.OK);
     }
-    //Кривые наименования ввиду несостыковки требований задачи и построения логики программы вцелом (да, знаю это плохо):
-    //в задаче не предусмотрено существование класса Department
-    @GetMapping("/all")
-    public ResponseEntity<Collection<Employee>> getAllEmployeesFromDepartment(@RequestParam(required = false) Integer id){
-        var result = new ArrayList<Employee>();
-        if(id == null){
-            result.addAll(departmentService.getEmployeesFromAllDepartments());
-            return new ResponseEntity<>(result, HttpStatus.OK);
-        }
-        result.addAll(departmentService.getEmployeesFromDepartment(id));
-        return new ResponseEntity<>(result, HttpStatus.OK);
+
+    @GetMapping(path="/all", params = {"id"})
+    public ResponseEntity<Collection<Employee>> getEmployeesFromDepartment(@RequestParam Integer id){
+        return new ResponseEntity<>(departmentService.getEmployeesFromDepartment(id), HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/all", params = {})
+    public ResponseEntity<Collection<Employee>> getAllEmployeesFromDepartments(){
+        return new ResponseEntity<>(departmentService.getEmployeesFromAllDepartments(), HttpStatus.OK);
     }
 
     @GetMapping("/min-salary")
