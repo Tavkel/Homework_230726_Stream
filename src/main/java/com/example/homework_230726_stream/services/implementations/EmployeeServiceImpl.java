@@ -5,7 +5,7 @@ import com.example.homework_230726_stream.exceptions.MaxEmployeeCountReachedExce
 import com.example.homework_230726_stream.helpers.StupidCache;
 import com.example.homework_230726_stream.models.Employee;
 import com.example.homework_230726_stream.services.interfaces.EmployeeService;
-import com.example.homework_230726_stream.services.repositories.EmployeeRepository;
+import com.example.homework_230726_stream.repositories.EmployeeRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

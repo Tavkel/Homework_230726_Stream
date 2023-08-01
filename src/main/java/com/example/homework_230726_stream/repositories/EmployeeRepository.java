@@ -1,4 +1,4 @@
-package com.example.homework_230726_stream.services.repositories;
+package com.example.homework_230726_stream.repositories;
 
 import com.example.homework_230726_stream.models.Employee;
 import org.springframework.data.jpa.repository.JpaRepository;

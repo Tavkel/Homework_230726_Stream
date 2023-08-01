@@ -4,7 +4,7 @@ import com.example.homework_230726_stream.helpers.StupidCache;
 import com.example.homework_230726_stream.models.Department;
 import com.example.homework_230726_stream.models.Employee;
 import com.example.homework_230726_stream.services.interfaces.DepartmentService;
-import com.example.homework_230726_stream.services.repositories.DepartmentRepository;
+import com.example.homework_230726_stream.repositories.DepartmentRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
