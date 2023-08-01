@@ -1,5 +1,6 @@
 package com.example.homework_230726_stream.helpers;
 
+import com.example.homework_230726_stream.services.interfaces.StupidCache;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -8,7 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 @Component
-public class StupidCache<T> {
+public class StupidCacheImpl<T> implements StupidCache {
     private Set<String> keys = new HashSet<>();
     private Map<String, Object> values = new HashMap<>();
 
@@ -25,8 +26,18 @@ public class StupidCache<T> {
         return (T) values.get(key);
     }
 
-    public void set(String key, T value) {
-        values.put(key, (Object) value);
+    public void set(String key, Object value) {
+        values.put(key, value);
         keys.add(key);
+    }
+
+    @Override
+    public boolean checkCache(String key) {
+        return this.hasKey(key);
+    }
+
+    @Override
+    public void loadCache(String key, Object value) {
+        this.set(key, (T)value);
     }
 }

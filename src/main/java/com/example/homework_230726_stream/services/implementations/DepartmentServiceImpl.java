@@ -1,10 +1,11 @@
 package com.example.homework_230726_stream.services.implementations;
 
-import com.example.homework_230726_stream.helpers.StupidCache;
+import com.example.homework_230726_stream.helpers.StupidCacheImpl;
 import com.example.homework_230726_stream.models.Department;
 import com.example.homework_230726_stream.models.Employee;
 import com.example.homework_230726_stream.services.interfaces.DepartmentService;
 import com.example.homework_230726_stream.repositories.DepartmentRepository;
+import com.example.homework_230726_stream.services.interfaces.StupidCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -26,12 +27,16 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public List<Department> getAllDepartments() {
-        checkCache();
+        if(!cache.checkCache(cacheKey)){
+            cache.loadCache(cacheKey, departmentRepository.findAll());
+        }
         return cache.get(cacheKey);
     }
 
     private Department getDepartmentById(int id) {
-        checkCache();
+        if(!cache.checkCache(cacheKey)){
+            cache.loadCache(cacheKey, departmentRepository.findAll());
+        }
         var result = cache.get(cacheKey).stream()
                 .filter(d -> d.getId() == id)
                 .findFirst();
@@ -44,7 +49,9 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public Employee getMinSalaryEmployee(int id) {
-        checkCache();
+        if(!cache.checkCache(cacheKey)){
+            cache.loadCache(cacheKey, departmentRepository.findAll());
+        }
         var department = getDepartmentById(id);
         var result = department.getEmployees().stream()
                 .min(Comparator.comparingDouble(Employee::getSalary));
@@ -57,7 +64,9 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public Employee getMaxSalaryEmployee(int id) {
-        checkCache();
+        if(!cache.checkCache(cacheKey)){
+            cache.loadCache(cacheKey, departmentRepository.findAll());
+        }
         var department = getDepartmentById(id);
         var result = department.getEmployees().stream()
                 .max(Comparator.comparingDouble(Employee::getSalary));
@@ -70,18 +79,10 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public Collection<Employee> getEmployeesFromDepartment(int id) {
-        checkCache();
+        if(!cache.checkCache(cacheKey)){
+            cache.loadCache(cacheKey, departmentRepository.findAll());
+        }
         var department = getDepartmentById(id);
         return department.getEmployees();
-    }
-
-    private void checkCache() {
-        if (!cache.hasKey(cacheKey)) {
-            loadCache();
-        }
-    }
-
-    private void loadCache() {
-        cache.set(cacheKey, departmentRepository.findAll());
     }
 }

@@ -2,10 +2,11 @@ package com.example.homework_230726_stream.services.implementations;
 
 import com.example.homework_230726_stream.exceptions.EmployeeAlreadyExistsException;
 import com.example.homework_230726_stream.exceptions.MaxEmployeeCountReachedException;
-import com.example.homework_230726_stream.helpers.StupidCache;
+import com.example.homework_230726_stream.helpers.StupidCacheImpl;
 import com.example.homework_230726_stream.models.Employee;
 import com.example.homework_230726_stream.services.interfaces.EmployeeService;
 import com.example.homework_230726_stream.repositories.EmployeeRepository;
+import com.example.homework_230726_stream.services.interfaces.StupidCache;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,20 +29,26 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public List<Employee> getAllEmployees() {
-        checkCache();
+        if(!cache.checkCache(cacheKey)){
+            cache.loadCache(cacheKey, employeeRepository.findAll());
+        }
         return cache.get(cacheKey);
     }
 
     @Override
     public Map<String, List<Employee>> getAllEmployeesGroupedByDepartment() {
-        checkCache();
+        if(!cache.checkCache(cacheKey)){
+            cache.loadCache(cacheKey, employeeRepository.findAll());
+        }
         return cache.get(cacheKey).stream()
                 .collect(Collectors.groupingBy(e -> e.getDepartment().getDepartmentName()));
     }
 
     @Override
     public Employee getEmployeeById(int id) {
-        checkCache();
+        if(!cache.checkCache(cacheKey)){
+            cache.loadCache(cacheKey, employeeRepository.findAll());
+        }
         var result = cache.get(cacheKey).stream()
                 .filter(e -> e.getId() == id)
                 .findFirst();
@@ -61,7 +68,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee createEmployee(Employee employee) {
-        checkCache();
+        if(!cache.checkCache(cacheKey)){
+            cache.loadCache(cacheKey, employeeRepository.findAll());
+        }
         if (cache.get(cacheKey).size() >= MAX_EMPLOYEE_COUNT) {
             throw new MaxEmployeeCountReachedException();
         }
@@ -71,15 +80,5 @@ public class EmployeeServiceImpl implements EmployeeService {
         cache.dropCacheKey(cacheKey);
         employeeRepository.saveAndFlush(employee);
         return employee;
-    }
-
-    private void checkCache() {
-        if (!cache.hasKey(cacheKey)) {
-            loadCache();
-        }
-    }
-
-    private void loadCache() {
-        cache.set(cacheKey, employeeRepository.findAll());
     }
 }
