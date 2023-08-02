@@ -37,14 +37,10 @@ public class DepartmentServiceImpl implements DepartmentService {
         if(!cache.checkCache(cacheKey)){
             cache.loadCache(cacheKey, departmentRepository.findAll());
         }
-        var result = cache.get(cacheKey).stream()
+        return cache.get(cacheKey).stream()
                 .filter(d -> d.getId() == id)
-                .findFirst();
-        if (result.isPresent()) {
-            return result.get();
-        } else {
-            throw new NoSuchElementException();
-        }
+                .findFirst()
+                .orElseThrow(NoSuchElementException::new);
     }
 
     @Override
@@ -53,13 +49,9 @@ public class DepartmentServiceImpl implements DepartmentService {
             cache.loadCache(cacheKey, departmentRepository.findAll());
         }
         var department = getDepartmentById(id);
-        var result = department.getEmployees().stream()
-                .min(Comparator.comparingDouble(Employee::getSalary));
-        if (result.isPresent()) {
-            return result.get();
-        } else {
-            throw new NoSuchElementException();
-        }
+        return department.getEmployees().stream()
+                .min(Comparator.comparingDouble(Employee::getSalary))
+                .orElseThrow(NoSuchElementException::new);
     }
 
     @Override
@@ -68,13 +60,9 @@ public class DepartmentServiceImpl implements DepartmentService {
             cache.loadCache(cacheKey, departmentRepository.findAll());
         }
         var department = getDepartmentById(id);
-        var result = department.getEmployees().stream()
-                .max(Comparator.comparingDouble(Employee::getSalary));
-        if (result.isPresent()) {
-            return result.get();
-        } else {
-            throw new NoSuchElementException();
-        }
+        return department.getEmployees().stream()
+                .max(Comparator.comparingDouble(Employee::getSalary))
+                .orElseThrow(NoSuchElementException::new);
     }
 
     @Override

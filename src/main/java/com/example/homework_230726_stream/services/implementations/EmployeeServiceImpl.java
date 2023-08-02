@@ -49,14 +49,10 @@ public class EmployeeServiceImpl implements EmployeeService {
         if(!cache.checkCache(cacheKey)){
             cache.loadCache(cacheKey, employeeRepository.findAll());
         }
-        var result = cache.get(cacheKey).stream()
+        return cache.get(cacheKey).stream()
                 .filter(e -> e.getId() == id)
-                .findFirst();
-        if (result.isPresent()) {
-            return result.get();
-        } else {
-            throw new NoSuchElementException();
-        }
+                .findFirst()
+                .orElseThrow(NoSuchElementException::new);
     }
 
     @Override
