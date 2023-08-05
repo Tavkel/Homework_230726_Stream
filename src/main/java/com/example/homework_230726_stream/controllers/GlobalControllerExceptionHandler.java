@@ -35,7 +35,7 @@ public class GlobalControllerExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<String> hadleMethodArgumentTypeMismatchException(WebRequest request, MethodArgumentTypeMismatchException e) {
+    public ResponseEntity<String> handleMethodArgumentTypeMismatchException(WebRequest request, MethodArgumentTypeMismatchException e) {
         logger.error("Wrong argument type " + request.getDescription(true));
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Wrong argument type!<br> "
                 + e);

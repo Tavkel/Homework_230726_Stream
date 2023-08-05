@@ -1,7 +1,9 @@
 package com.example.homework_230726_stream.services.implementations;
 
 import com.example.homework_230726_stream.exceptions.EmployeeAlreadyExistsException;
+import com.example.homework_230726_stream.exceptions.InvalidEmployeeDataException;
 import com.example.homework_230726_stream.exceptions.MaxEmployeeCountReachedException;
+import com.example.homework_230726_stream.helpers.EmployeeValidator;
 import com.example.homework_230726_stream.models.Employee;
 import com.example.homework_230726_stream.services.interfaces.EmployeeService;
 import com.example.homework_230726_stream.repositories.EmployeeRepository;
@@ -60,6 +62,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     public Employee updateEmployee(Employee employee) {
         cache.dropCache();
 
+        if (!EmployeeValidator.checkEmployee(employee)) throw new InvalidEmployeeDataException();
         capitalizeNames(employee);
 
         employeeRepository.saveAndFlush(employee);
@@ -75,6 +78,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             throw new MaxEmployeeCountReachedException();
         }
 
+        if (!EmployeeValidator.checkEmployee(employee)) throw new InvalidEmployeeDataException();
         capitalizeNames(employee);
 
         if (cache.get(cacheKey).contains(employee)) {

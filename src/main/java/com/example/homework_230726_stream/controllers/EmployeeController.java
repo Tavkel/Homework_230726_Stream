@@ -39,8 +39,6 @@ public class EmployeeController {
 
     @PostMapping("/update")
     public ResponseEntity<EmployeeDto> updateEmployee(@RequestBody EmployeeDto employee) {
-        EmployeeValidator.checkEmployee(employee);
-
         Employee result;
         if (employee.getId() == 0) {
             result = employeeService.createEmployee(EmployeeMapper.MAPPER.toEmployee(employee));
