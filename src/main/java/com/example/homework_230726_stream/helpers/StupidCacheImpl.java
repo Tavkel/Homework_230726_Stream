@@ -18,6 +18,11 @@ public class StupidCacheImpl<T> implements StupidCache {
         values.remove(key);
     }
 
+    public void dropCache(){
+        keys.clear();
+        values.clear();
+    }
+
     public boolean hasKey(String key) {
         return keys.contains(key);
     }

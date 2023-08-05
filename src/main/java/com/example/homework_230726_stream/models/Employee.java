@@ -33,12 +33,14 @@ public class Employee {
     public Employee() {
     }
 
-    public Employee(String lastName, String firstName, String middleName, float salary, int departmentId) {
+    public Employee(int id, String lastName, String firstName, String middleName, float salary, int departmentId) {
+
+        this.id = id;
         this.lastName = lastName;
         this.firstName = firstName;
         this.middleName = middleName;
         this.salary = salary;
-        //this.department = new Department("asd"); //Посмотреть как это делается нормально
+        this.department = new Department(departmentId); //Посмотреть как это делается нормально
     }
 
     public int getId() {
@@ -87,6 +89,11 @@ public class Employee {
 
     public void setDepartment(Department department) {
         this.department = department;
+    }
+
+    @JsonIgnore
+    public int getDepartmentId() {
+        return this.getDepartment().getId();
     }
 
     @Override

@@ -15,6 +15,7 @@ public class Homework230726StreamApplication {
         // - implement validation (check if given credentials grant access to db)
         // - implement encryption
         // - write credentials to a file and read from there if it's present?
+        // - ?? ask for url and db driver ??
         boolean valid = true;
         Scanner input = new Scanner(System.in);
         do {
