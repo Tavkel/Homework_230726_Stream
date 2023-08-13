@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class DepartmentServiceImpl implements DepartmentService {
@@ -62,6 +63,17 @@ public class DepartmentServiceImpl implements DepartmentService {
         return department.getEmployees().stream()
                 .max(Comparator.comparingDouble(Employee::getSalary))
                 .orElseThrow(NoSuchElementException::new);
+    }
+
+    @Override
+    public Float getSumOfSalaries(int id) {
+        if(!cache.checkCache(cacheKey)) {
+            cache.loadCache(cacheKey, departmentRepository.findAll());
+        }
+        var department = getDepartmentById(id);
+        return department.getEmployees().stream()
+                .map(Employee::getSalary)
+                .reduce(0.0f, Float::sum);
     }
 
     @Override

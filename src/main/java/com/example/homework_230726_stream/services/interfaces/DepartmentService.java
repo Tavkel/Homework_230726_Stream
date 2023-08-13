@@ -13,5 +13,7 @@ public interface DepartmentService {
 
     Employee getMaxSalaryEmployee(int id);
 
+    Float getSumOfSalaries(int id);
+
     Collection<Employee> getEmployeesFromDepartment(int id);
 }
