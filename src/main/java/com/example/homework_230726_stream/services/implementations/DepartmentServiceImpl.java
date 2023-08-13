@@ -1,6 +1,5 @@
 package com.example.homework_230726_stream.services.implementations;
 
-import com.example.homework_230726_stream.helpers.StupidCacheImpl;
 import com.example.homework_230726_stream.models.Department;
 import com.example.homework_230726_stream.models.Employee;
 import com.example.homework_230726_stream.services.interfaces.DepartmentService;
@@ -27,14 +26,14 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public List<Department> getAllDepartments() {
-        if(!cache.checkCache(cacheKey)){
+        if (!cache.checkCache(cacheKey)) {
             cache.loadCache(cacheKey, departmentRepository.findAll());
         }
         return cache.get(cacheKey);
     }
 
     private Department getDepartmentById(int id) {
-        if(!cache.checkCache(cacheKey)){
+        if (!cache.checkCache(cacheKey)) {
             cache.loadCache(cacheKey, departmentRepository.findAll());
         }
         return cache.get(cacheKey).stream()
@@ -45,7 +44,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public Employee getMinSalaryEmployee(int id) {
-        if(!cache.checkCache(cacheKey)){
+        if (!cache.checkCache(cacheKey)) {
             cache.loadCache(cacheKey, departmentRepository.findAll());
         }
         var department = getDepartmentById(id);
@@ -56,7 +55,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public Employee getMaxSalaryEmployee(int id) {
-        if(!cache.checkCache(cacheKey)){
+        if (!cache.checkCache(cacheKey)) {
             cache.loadCache(cacheKey, departmentRepository.findAll());
         }
         var department = getDepartmentById(id);
@@ -67,7 +66,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public Collection<Employee> getEmployeesFromDepartment(int id) {
-        if(!cache.checkCache(cacheKey)){
+        if (!cache.checkCache(cacheKey)) {
             cache.loadCache(cacheKey, departmentRepository.findAll());
         }
         var department = getDepartmentById(id);

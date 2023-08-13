@@ -30,6 +30,10 @@ public class Department {
         this.departmentName = departmentName;
     }
 
+    public Department(int id) {
+        this.id = id;
+    }
+
     public String getDepartmentName() {
         return departmentName;
     }

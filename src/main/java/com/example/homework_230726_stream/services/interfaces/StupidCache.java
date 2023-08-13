@@ -7,4 +7,6 @@ public interface StupidCache<T> {
     void set(String key, T value);
     boolean checkCache(String key);
     void loadCache(String key, T value);
+
+    void dropCache();
 }
