@@ -45,6 +45,7 @@ public class DepartmentController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    //refer to service implementation for clarification on why List<Employee>
     @GetMapping(path = "/employees")
     public ResponseEntity<Map<String, List<Employee>>> getAllEmployeesGroupedByDepartment() {
         var result = employeeService.getAllEmployeesGroupedByDepartment();

@@ -22,7 +22,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final EmployeeRepository employeeRepository;
 
     private final StupidCache<List<Employee>> cache;
-    private final String cacheKey = "employees";
+    private final String cacheKey = EmployeeRepository.class.getSimpleName(); //"employees";
 
     public EmployeeServiceImpl(EmployeeRepository employeeRepository, StupidCache cache) {
         this.employeeRepository = employeeRepository;
@@ -31,17 +31,15 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public List<Employee> getAllEmployees() {
-        if (!cache.checkCache(cacheKey)) {
-            cache.loadCache(cacheKey, employeeRepository.findAll());
-        }
         return cache.get(cacheKey);
     }
 
+
+    //TODO
+    // - check remapping Employee to EmployeeDto
+    // - problem: how to group by department name if no department name exists if mapping to dto
     @Override
     public Map<String, List<Employee>> getAllEmployeesGroupedByDepartment() {
-        if (!cache.checkCache(cacheKey)) {
-            cache.loadCache(cacheKey, employeeRepository.findAll());
-        }
         return cache.get(cacheKey)
                 .stream()
                 .collect(Collectors.groupingBy(e -> e.getDepartment().getDepartmentName()));
@@ -49,9 +47,6 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee getEmployeeById(int id) {
-        if (!cache.checkCache(cacheKey)) {
-            cache.loadCache(cacheKey, employeeRepository.findAll());
-        }
         return cache.get(cacheKey).stream()
                 .filter(e -> e.getId() == id)
                 .findFirst()
@@ -71,9 +66,6 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee createEmployee(Employee employee) {
-        if (!cache.checkCache(cacheKey)) {
-            cache.loadCache(cacheKey, employeeRepository.findAll());
-        }
         if (cache.get(cacheKey).size() >= MAX_EMPLOYEE_COUNT) {
             throw new MaxEmployeeCountReachedException();
         }

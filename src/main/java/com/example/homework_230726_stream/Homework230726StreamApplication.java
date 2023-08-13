@@ -10,21 +10,24 @@ import java.util.Scanner;
 public class Homework230726StreamApplication {
 
     public static void main(String[] args) {
-
         //TODO:
         // - implement validation (check if given credentials grant access to db)
         // - implement encryption
         // - write credentials to a file and read from there if it's present?
         // - ?? ask for url and db driver ??
-        boolean valid = true;
-        Scanner input = new Scanner(System.in);
-        do {
-            System.out.println("Enter login...");
-            Credentials.setUser(input.nextLine());
-            System.out.println("Enter password...");
-            Credentials.setPassword(input.nextLine());
-        } while (!valid);
-
+        if (args == null || args.length == 0) {
+            boolean valid = true;
+            Scanner input = new Scanner(System.in);
+            do {
+                System.out.println("Enter login...");
+                Credentials.setUser(input.nextLine());
+                System.out.println("Enter password...");
+                Credentials.setPassword(input.nextLine());
+            } while (!valid);
+        }  else {
+            Credentials.setUser(args[0]);
+            Credentials.setPassword(args[1]);
+        }
         SpringApplication.run(Homework230726StreamApplication.class, args);
     }
 
