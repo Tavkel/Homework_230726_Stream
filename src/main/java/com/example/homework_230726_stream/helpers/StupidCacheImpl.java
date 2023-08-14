@@ -15,17 +15,14 @@ import java.util.Set;
 public class StupidCacheImpl<T> implements StupidCache {
     private Set<String> keys = new HashSet<>();
     private Map<String, Object> values = new HashMap<>();
+    //TODO: put repos into collection may be?
+    // - How to chance constructor to accept unknown amount of different repos?
     private EmployeeRepository employeeRepository;
     private DepartmentRepository departmentRepository;
 
     public StupidCacheImpl(EmployeeRepository employeeRepository, DepartmentRepository departmentRepository) {
         this.employeeRepository = employeeRepository;
         this.departmentRepository = departmentRepository;
-    }
-
-    public void dropCacheKey(String key) {
-        keys.remove(key);
-        values.remove(key);
     }
 
     public void dropCache() {

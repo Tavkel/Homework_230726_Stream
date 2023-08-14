@@ -21,12 +21,8 @@ public class Employee {
     @Column(name = "salary")
     private float salary;
 
-    //При попытке создания/эдита сотрудника
-    //2023-08-01 00:18:09.847  WARN 10028 --- [nio-8080-exec-5] .c.j.MappingJackson2HttpMessageConverter : Failed to evaluate Jackson deserialization for type [[simple type, class com.example.homework_230726_stream.models.Employee]]: com.fasterxml.jackson.databind.exc.InvalidDefinitionException: Cannot handle managed/back reference 'defaultReference': back reference type (`java.util.Set<com.example.homework_230726_stream.models.Employee>`) not compatible with managed type (com.example.homework_230726_stream.models.Employee)
-    //Я сдаюсь пока - двухсторонние референсы и жсон это отдельная песня <______<'''''
     @ManyToOne
     @JsonManagedReference
-    //@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
     @JoinColumn(name = "department_id", nullable = false)
     private Department department;
 
@@ -41,6 +37,15 @@ public class Employee {
         this.middleName = middleName;
         this.salary = salary;
         this.department = new Department(departmentId); //Посмотреть как это делается нормально
+    }
+
+    public Employee(int id, String lastName, String firstName, String middleName, float salary, Department department) {
+        this.id = id;
+        this.lastName = lastName;
+        this.firstName = firstName;
+        this.middleName = middleName;
+        this.salary = salary;
+        this.department = department;
     }
 
     public int getId() {
@@ -110,14 +115,13 @@ public class Employee {
         if (this == o) return true;
         if (!(o instanceof Employee)) return false;
         Employee employee = (Employee) o;
-        return Float.compare(employee.salary, salary) == 0
-                && Objects.equals(lastName, employee.lastName)
+        return Objects.equals(lastName, employee.lastName)
                 && Objects.equals(firstName, employee.firstName)
                 && Objects.equals(middleName, employee.middleName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(lastName, firstName, middleName, salary);
+        return Objects.hash(lastName, firstName, middleName);
     }
 }

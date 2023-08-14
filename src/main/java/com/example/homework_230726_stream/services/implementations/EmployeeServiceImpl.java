@@ -36,7 +36,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 
     //TODO
-    // - check remapping Employee to EmployeeDto
+    // - check mapping Employee to EmployeeDto
     // - problem: how to group by department name if no department name exists if mapping to dto
     @Override
     public Map<String, List<Employee>> getAllEmployeesGroupedByDepartment() {
@@ -55,25 +55,32 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee updateEmployee(Employee employee) {
-        cache.dropCache();
+        if (!EmployeeValidator.checkEmployee(employee)){
+            throw new InvalidEmployeeDataException();
+        }
 
-        if (!EmployeeValidator.checkEmployee(employee)) throw new InvalidEmployeeDataException();
+        if (cache.get(cacheKey).stream().noneMatch(e -> e.getId() == employee.getId())){
+            throw new NoSuchElementException();
+        }
+
         capitalizeNames(employee);
 
+        cache.dropCache();
         employeeRepository.saveAndFlush(employee);
         return employee;
     }
 
     @Override
     public Employee createEmployee(Employee employee) {
-        if (cache.get(cacheKey).size() >= MAX_EMPLOYEE_COUNT) {
+        var employees = cache.get(cacheKey);
+        if (employees.size() >= MAX_EMPLOYEE_COUNT) {
             throw new MaxEmployeeCountReachedException();
         }
 
         if (!EmployeeValidator.checkEmployee(employee)) throw new InvalidEmployeeDataException();
         capitalizeNames(employee);
 
-        if (cache.get(cacheKey).contains(employee)) {
+        if (employees.contains(employee)) {
             throw new EmployeeAlreadyExistsException();
         }
         cache.dropCache();
