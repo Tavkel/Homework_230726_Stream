@@ -35,7 +35,7 @@ public class StupidCacheImpl<T> implements StupidCache {
     }
 
     public T get(String key) {
-        if(!this.checkCache(key)){
+        if (!this.checkCache(key)) {
             try {
                 var repository = this.getClass().getDeclaredField(StringUtils.uncapitalize(key)).get(this);
                 var result = repository.getClass().getDeclaredMethod("findAll").invoke(repository);

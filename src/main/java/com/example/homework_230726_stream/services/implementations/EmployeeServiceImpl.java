@@ -55,11 +55,11 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee updateEmployee(Employee employee) {
-        if (!EmployeeValidator.checkEmployee(employee)){
+        if (!EmployeeValidator.checkEmployee(employee)) {
             throw new InvalidEmployeeDataException();
         }
 
-        if (cache.get(cacheKey).stream().noneMatch(e -> e.getId() == employee.getId())){
+        if (cache.get(cacheKey).stream().noneMatch(e -> e.getId() == employee.getId())) {
             throw new NoSuchElementException();
         }
 

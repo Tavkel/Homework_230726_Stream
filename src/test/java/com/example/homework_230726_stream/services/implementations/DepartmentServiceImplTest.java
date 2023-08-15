@@ -3,7 +3,6 @@ package com.example.homework_230726_stream.services.implementations;
 import com.example.homework_230726_stream.models.Department;
 import com.example.homework_230726_stream.models.Employee;
 import com.example.homework_230726_stream.repositories.DepartmentRepository;
-import com.example.homework_230726_stream.repositories.EmployeeRepository;
 import com.example.homework_230726_stream.services.interfaces.DepartmentService;
 import com.example.homework_230726_stream.services.interfaces.StupidCache;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,7 +27,7 @@ class DepartmentServiceImplTest {
     private DepartmentService sut;
 
     @BeforeEach
-    private void initializeSut(){
+    private void initializeSut() {
         sut = new DepartmentServiceImpl(departmentRepository, cache);
         attachEmployees();
     }
@@ -101,6 +100,7 @@ class DepartmentServiceImplTest {
         verify(cache, only()).get(any());
     }
 }
+
 class DepartmentServiceTestData {
     static Department DEP1 = new Department(1, "Management");
     static Department DEP2 = new Department(2, "IT");
@@ -109,26 +109,27 @@ class DepartmentServiceTestData {
     static Department DEP5 = new Department(5, "Accounting");
     public static List<Department> DEPARTMENTS = new ArrayList<>(Arrays.asList(DEP1, DEP2, DEP3, DEP4, DEP5));
 
-    static Employee EMPLOYEE1 = new Employee(1,"Kuznetsova","Maria","Ivanovna",10_000f,DEP1);
-    static Employee EMPLOYEE11 = new Employee(2,"Kuznetsovaaa","Maria","Ivanovna",20_000f,DEP1);
-    static Employee EMPLOYEE2 = new Employee(3,"Pushkin","Vasiliy","Petrovich",20_000f,DEP2);
-    static Employee EMPLOYEE22 = new Employee(4,"Pushkinnn","Vasiliy","Petrovich",30_000f,DEP2);
-    static Employee EMPLOYEE3 = new Employee(5,"Rukin","Petr","Vasilyevich",30_000f,DEP3);
-    static Employee EMPLOYEE33 = new Employee(6,"Rukinnn","Petr","Vasilyevich",40_000f,DEP3);
-    static Employee EMPLOYEE4 = new Employee(7,"Letov","Egor","Fedorovich",40_000f,DEP4);
-    static Employee EMPLOYEE44 = new Employee(8,"Letovvv","Egor","Fedorovich",50_000f,DEP4);
-    static Employee EMPLOYEE5 = new Employee(9,"Esenin","Andrei","Olegovich",50_000f,DEP5);
-    static Employee EMPLOYEE55 = new Employee(10,"Eseninnn","Andrei","Olegovich",60_000f,DEP5);
+    static Employee EMPLOYEE1 = new Employee(1, "Kuznetsova", "Maria", "Ivanovna", 10_000f, DEP1);
+    static Employee EMPLOYEE11 = new Employee(2, "Kuznetsovaaa", "Maria", "Ivanovna", 20_000f, DEP1);
+    static Employee EMPLOYEE2 = new Employee(3, "Pushkin", "Vasiliy", "Petrovich", 20_000f, DEP2);
+    static Employee EMPLOYEE22 = new Employee(4, "Pushkinnn", "Vasiliy", "Petrovich", 30_000f, DEP2);
+    static Employee EMPLOYEE3 = new Employee(5, "Rukin", "Petr", "Vasilyevich", 30_000f, DEP3);
+    static Employee EMPLOYEE33 = new Employee(6, "Rukinnn", "Petr", "Vasilyevich", 40_000f, DEP3);
+    static Employee EMPLOYEE4 = new Employee(7, "Letov", "Egor", "Fedorovich", 40_000f, DEP4);
+    static Employee EMPLOYEE44 = new Employee(8, "Letovvv", "Egor", "Fedorovich", 50_000f, DEP4);
+    static Employee EMPLOYEE5 = new Employee(9, "Esenin", "Andrei", "Olegovich", 50_000f, DEP5);
+    static Employee EMPLOYEE55 = new Employee(10, "Eseninnn", "Andrei", "Olegovich", 60_000f, DEP5);
 
-    public static void attachEmployees(){
-        try{
+    public static void attachEmployees() {
+        try {
             var field = Department.class.getDeclaredField("employees");
             field.setAccessible(true);
             field.set(DEP1, new HashSet<>(Arrays.asList(EMPLOYEE1, EMPLOYEE11)));
-            field.set(DEP2, new HashSet<>(Arrays.asList(EMPLOYEE2,EMPLOYEE22)));
+            field.set(DEP2, new HashSet<>(Arrays.asList(EMPLOYEE2, EMPLOYEE22)));
             field.set(DEP3, new HashSet<>(Arrays.asList(EMPLOYEE3, EMPLOYEE33)));
             field.set(DEP4, new HashSet<>(Arrays.asList(EMPLOYEE4, EMPLOYEE44)));
             field.set(DEP5, new HashSet<>(Arrays.asList(EMPLOYEE5, EMPLOYEE55)));
-        } catch (Exception ignored){}
+        } catch (Exception ignored) {
+        }
     }
 }

@@ -26,7 +26,7 @@ class StupidCacheImplTest {
 
     //Я забыл почему это не аннотировано BeforeEach
     //У меня течет мозг от этого класса. Надо передохнуть, может завтра после разбора что-то более дельное придет в голову.
-    void fillCache(){
+    void fillCache() {
         sut = new StupidCacheImpl(employeeRepository, departmentRepository);
         testData = new CacheTestData();
         try {
@@ -36,7 +36,8 @@ class StupidCacheImplTest {
             keysField.setAccessible(true);
             valuesField.set(sut, testData.values);
             keysField.set(sut, testData.keys);
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
     }
 
     @Test
@@ -71,7 +72,8 @@ class StupidCacheImplTest {
         assertEquals(testData.values.get("EmployeeRepository"), actual);
     }
 }
-class CacheTestData{
+
+class CacheTestData {
     public CacheTestData() {
         keys = new HashSet<>();
         keys.add("EmployeeRepository");
@@ -83,6 +85,7 @@ class CacheTestData{
         values.put("EmployeeRepository", employee);
         values.put("DepartmentRepository", department);
     }
+
     public HashSet<String> keys;
 
     public HashMap<String, Object> values;
