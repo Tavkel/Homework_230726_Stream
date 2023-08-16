@@ -35,7 +35,7 @@ public class Department {
         this.id = id;
     }
 
-    public Department(int id, String departmentName){
+    public Department(int id, String departmentName) {
         this.id = id;
         this.departmentName = departmentName;
     }
@@ -58,6 +58,10 @@ public class Department {
 
     public Set<Employee> getEmployees() {
         return employees;
+    }
+
+    public void setEmployees(Set<Employee> employees) {
+        this.employees = employees;
     }
 
     @Override

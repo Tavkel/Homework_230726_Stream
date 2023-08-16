@@ -3,13 +3,13 @@ package com.example.homework_230726_stream.services.implementations;
 import com.example.homework_230726_stream.exceptions.EmployeeAlreadyExistsException;
 import com.example.homework_230726_stream.exceptions.InvalidEmployeeDataException;
 import com.example.homework_230726_stream.exceptions.MaxEmployeeCountReachedException;
+import com.example.homework_230726_stream.helpers.AppVariables;
 import com.example.homework_230726_stream.helpers.EmployeeValidator;
 import com.example.homework_230726_stream.models.Department;
 import com.example.homework_230726_stream.models.Employee;
 import com.example.homework_230726_stream.repositories.EmployeeRepository;
 import com.example.homework_230726_stream.services.interfaces.EmployeeService;
 import com.example.homework_230726_stream.services.interfaces.StupidCache;
-import org.hibernate.mapping.Any;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,7 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.example.homework_230726_stream.services.implementations.EmployeeServiceTestData.*;
+import static com.example.homework_230726_stream.services.implementations.EmployeeServiceImplTest.EmployeeServiceTestData.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -30,11 +30,18 @@ class EmployeeServiceImplTest {
     private EmployeeRepository employeeRepository;
     @Mock
     private StupidCache<List<Employee>> cache;
+    @Mock
+    private AppVariables appVariables;
+
+    private EmployeeValidator employeeValidator;
     private EmployeeService sut;
 
     @BeforeEach
     private void initializeSut() {
-        sut = new EmployeeServiceImpl(employeeRepository, cache);
+        when(appVariables.getMaxEmployeeCount()).thenReturn(6);
+        when(appVariables.getDepartmentAmount()).thenReturn(5);
+        employeeValidator = new EmployeeValidator(appVariables);
+        sut = new EmployeeServiceImpl(employeeRepository, cache, appVariables, employeeValidator);
     }
 
     @Test
@@ -126,19 +133,12 @@ class EmployeeServiceImplTest {
 
     @Test
     void createEmployee_shouldThrowMaxEmployeeCountReachedExceptionIfMaxAmountReached() {
+        when(appVariables.getMaxEmployeeCount()).thenReturn(5);
+        sut = new EmployeeServiceImpl(employeeRepository, cache, appVariables, employeeValidator);
+
         when(cache.get(EmployeeRepository.class.getSimpleName())).thenReturn(EMPLOYEES);
 
-        // Почему это не сработало? Дебаггер видит что в поле 3, но сравнение employees.size() (там 5) со значением поля
-        // (3) выдает false, 3 >= 5 == false. Моя не понимать.
-        // смена значения поля в самом классе дает ожидаемый результат и тест проходит успешно.
-        //TODO:
-        // - move max_employee_count property to configuration class. sometime. may be. hopefully.
-        try{
-            var field = sut.getClass().getDeclaredField("MAX_EMPLOYEE_COUNT");
-            field.setAccessible(true);
-            field.set(sut, 3);
-        } catch (Exception ignore){}
-        assertThrows(MaxEmployeeCountReachedException.class, () -> sut.createEmployee(VALID_EMPLOYEE_FOR_CREATION));
+        assertThrows(MaxEmployeeCountReachedException.class, () -> sut.createEmployee(VALID_EMPLOYEE_FOR_CREATION2));
 
         verify(cache, only()).get(any());
         verify(cache, never()).dropCache();
@@ -156,31 +156,33 @@ class EmployeeServiceImplTest {
         verify(cache, never()).dropCache();
         verify(employeeRepository, never()).saveAndFlush(any());
     }
-}
 
-class EmployeeServiceTestData {
-    static Department DEP1 = new Department(1, "Management");
-    static Department DEP2 = new Department(2, "IT");
-    static Department DEP3 = new Department(3, "Logistics");
-    static Department DEP4 = new Department(4, "Supply");
-    static Department DEP5 = new Department(5, "Accounting");
-    public static List<Department> DEPARTMENTS = new ArrayList<>(Arrays.asList(DEP1, DEP2, DEP3, DEP4, DEP5));
 
-    static Employee EMPLOYEE1 = new Employee(1,"Kuznetsova","Maria","Ivanovna",10_000f,DEP1);
-    static Employee EMPLOYEE2 = new Employee(2,"Pushkin","Vasiliy","Petrovich",20_000f,DEP2);
-    static Employee EMPLOYEE3 = new Employee(3,"Rukin","Petr","Vasilyevich",30_000f,DEP3);
-    static Employee EMPLOYEE4 = new Employee(4,"Letov","Egor","Fedorovich",40_000f,DEP4);
-    static Employee EMPLOYEE5 = new Employee(5,"Esenin","Andrei","Olegovich",50_000f,DEP5);
-    static Employee INVALID_EMPLOYEE = new Employee(6,"122409", "(*&", "sdfsdf", 4f, DEP1);
-    static Employee VALID_EMPLOYEE = new Employee(5,"esenin","andrei","olegovich",50_000f,DEP5);
-    static Employee INVALID_EMPLOYEE_FOR_UPDATE = new Employee(6,"esenin","andrei","olegovich",50_000f,DEP5);
-    static Employee VALID_EMPLOYEE_CAPITALIZED = new Employee(5,"Esenin","Andrei","Olegovich",50_000f,DEP5);
-    static Employee VALID_EMPLOYEE_FOR_CREATION = new Employee(0,"Esenin","Andrei","Andreevich",50_000f,DEP5);
-    public static List<Employee> EMPLOYEES = new ArrayList<>(Arrays.asList(
-            EMPLOYEE1,
-            EMPLOYEE2,
-            EMPLOYEE3,
-            EMPLOYEE4,
-            EMPLOYEE5
-    ));
+    static class EmployeeServiceTestData {
+        static Department DEP1 = new Department(1, "Management");
+        static Department DEP2 = new Department(2, "IT");
+        static Department DEP3 = new Department(3, "Logistics");
+        static Department DEP4 = new Department(4, "Supply");
+        static Department DEP5 = new Department(5, "Accounting");
+        public static List<Department> DEPARTMENTS = new ArrayList<>(Arrays.asList(DEP1, DEP2, DEP3, DEP4, DEP5));
+
+        static Employee EMPLOYEE1 = new Employee(1, "Kuznetsova", "Maria", "Ivanovna", 10_000f, DEP1);
+        static Employee EMPLOYEE2 = new Employee(2, "Pushkin", "Vasiliy", "Petrovich", 20_000f, DEP2);
+        static Employee EMPLOYEE3 = new Employee(3, "Rukin", "Petr", "Vasilyevich", 30_000f, DEP3);
+        static Employee EMPLOYEE4 = new Employee(4, "Letov", "Egor", "Fedorovich", 40_000f, DEP4);
+        static Employee EMPLOYEE5 = new Employee(5, "Esenin", "Andrei", "Olegovich", 50_000f, DEP5);
+        static Employee INVALID_EMPLOYEE = new Employee(6, "122409", "(*&", "sdfsdf", 4f, DEP1);
+        static Employee VALID_EMPLOYEE = new Employee(5, "esenin", "andrei", "olegovich", 50_000f, DEP5);
+        static Employee INVALID_EMPLOYEE_FOR_UPDATE = new Employee(6, "esenin", "andrei", "olegovich", 50_000f, DEP5);
+        static Employee VALID_EMPLOYEE_CAPITALIZED = new Employee(5, "Esenin", "Andrei", "Olegovich", 50_000f, DEP5);
+        static Employee VALID_EMPLOYEE_FOR_CREATION = new Employee(0, "Esenin", "Andrei", "Andreevich", 50_000f, DEP5);
+        static Employee VALID_EMPLOYEE_FOR_CREATION2 = new Employee(0, "Eseninnn", "Andrei", "Andreevich", 50_000f, DEP5);
+        public static List<Employee> EMPLOYEES = new ArrayList<>(Arrays.asList(
+                EMPLOYEE1,
+                EMPLOYEE2,
+                EMPLOYEE3,
+                EMPLOYEE4,
+                EMPLOYEE5
+        ));
+    }
 }

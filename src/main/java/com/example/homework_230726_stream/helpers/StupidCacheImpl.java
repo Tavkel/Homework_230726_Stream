@@ -1,5 +1,6 @@
 package com.example.homework_230726_stream.helpers;
 
+import com.example.homework_230726_stream.exceptions.KeyDoesNotExistException;
 import com.example.homework_230726_stream.repositories.DepartmentRepository;
 import com.example.homework_230726_stream.repositories.EmployeeRepository;
 import com.example.homework_230726_stream.services.interfaces.StupidCache;
@@ -30,18 +31,14 @@ public class StupidCacheImpl<T> implements StupidCache {
         values.clear();
     }
 
-    public boolean hasKey(String key) {
-        return keys.contains(key);
-    }
-
     public T get(String key) {
-        if (!this.checkCache(key)) {
+        if (!this.keys.contains(key)) {
             try {
                 var repository = this.getClass().getDeclaredField(StringUtils.uncapitalize(key)).get(this);
                 var result = repository.getClass().getDeclaredMethod("findAll").invoke(repository);
                 this.set(key, result);
             } catch (Exception e) {
-                System.out.println("something went wrong while calling repository");
+                throw new KeyDoesNotExistException();
             }
         }
         return (T) values.get(key);
@@ -50,9 +47,5 @@ public class StupidCacheImpl<T> implements StupidCache {
     private void set(String key, Object value) {
         values.put(key, value);
         keys.add(key);
-    }
-
-    private boolean checkCache(String key) {
-        return this.hasKey(key);
     }
 }

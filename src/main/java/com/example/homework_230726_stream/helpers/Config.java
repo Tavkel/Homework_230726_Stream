@@ -21,4 +21,10 @@ public class Config {
                 .password(Credentials.getPassword())
                 .build();
     }
+
+    @Bean
+    public AppVariables appVariables() {
+        return new AppVariables();
+    }
+
 }
