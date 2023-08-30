@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -34,6 +35,11 @@ public class Department {
         this.id = id;
     }
 
+    public Department(int id, String departmentName) {
+        this.id = id;
+        this.departmentName = departmentName;
+    }
+
     public String getDepartmentName() {
         return departmentName;
     }
@@ -52,6 +58,10 @@ public class Department {
 
     public Set<Employee> getEmployees() {
         return employees;
+    }
+
+    public void setEmployees(Set<Employee> employees) {
+        this.employees = employees;
     }
 
     @Override

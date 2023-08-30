@@ -1,16 +1,13 @@
 package com.example.homework_230726_stream.controllers;
 
 import com.example.homework_230726_stream.dto.EmployeeDto;
-import com.example.homework_230726_stream.helpers.EmployeeValidator;
 import com.example.homework_230726_stream.helpers.mapper.EmployeeMapper;
 import com.example.homework_230726_stream.models.Employee;
 import com.example.homework_230726_stream.services.interfaces.EmployeeService;
-import org.mapstruct.Mapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 

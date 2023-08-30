@@ -10,10 +10,7 @@ import com.example.homework_230726_stream.services.interfaces.DepartmentService;
 import com.example.homework_230726_stream.services.interfaces.EmployeeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 import java.util.List;
@@ -21,7 +18,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/departments")
+@RequestMapping("/department")
 public class DepartmentController {
     private final DepartmentService departmentService;
     private final EmployeeService employeeService;
@@ -40,31 +37,36 @@ public class DepartmentController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @GetMapping(path = "/all", params = {"id"})
-    public ResponseEntity<List<EmployeeDto>> getEmployeesFromDepartment(@RequestParam Integer id) {
+    @GetMapping(path = "/{id}/employees")
+    public ResponseEntity<List<EmployeeDto>> getEmployeesFromDepartment(@PathVariable Integer id) {
         var result = departmentService.getEmployeesFromDepartment(id)
                 .stream().map(EmployeeMapper.MAPPER::fromEmployee)
                 .collect(Collectors.toList());
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    //Need help here.
-    @GetMapping(path = "/all", params = {})
+    //refer to service implementation for clarification on why List<Employee>
+    @GetMapping(path = "/employees")
     public ResponseEntity<Map<String, List<Employee>>> getAllEmployeesGroupedByDepartment() {
         var result = employeeService.getAllEmployeesGroupedByDepartment();
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @GetMapping("/min-salary")
-    public ResponseEntity<EmployeeDto> getMinSalaryEmployeeFromDepartment(@RequestParam int id) {
+    @GetMapping("/{id}/salary/min")
+    public ResponseEntity<EmployeeDto> getMinSalaryEmployeeFromDepartment(@PathVariable int id) {
         var result = EmployeeMapper.MAPPER.fromEmployee(departmentService.getMinSalaryEmployee(id));
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @GetMapping("/max-salary")
-    public ResponseEntity<EmployeeDto> getMaxSalaryEmployeeFromDepartment(@RequestParam int id) {
+    @GetMapping("/{id}/salary/max")
+    public ResponseEntity<EmployeeDto> getMaxSalaryEmployeeFromDepartment(@PathVariable int id) {
         var result = EmployeeMapper.MAPPER.fromEmployee(departmentService.getMaxSalaryEmployee(id));
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    @GetMapping("/{id}/salary/sum")
+    public ResponseEntity<Float> getSumOfSalariesForDepartment(@PathVariable int id) {
+        var result = departmentService.getSumOfSalaries(id);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
 }
